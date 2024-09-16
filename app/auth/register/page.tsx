@@ -1,5 +1,5 @@
-import RegisterForm from "@/components/auth/register/RegisterForm";
 import OAuthLogins from "@/components/auth/OAuthLogins";
+import RegisterForm from "@/components/auth/register/RegisterForm";
 import {
   Card,
   CardContent,

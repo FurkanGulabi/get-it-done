@@ -13,8 +13,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Login } from "@/actions/Login";
 
 const LoginForm = () => {
+  const searchParams = useSearchParams();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState<string>(
+    searchParams.get("success") === "true"
+      ? "Register successful, please login"
+      : ""
+  );
+  const [isPending, setIsPending] = useState(false);
+
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
@@ -23,10 +35,16 @@ const LoginForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof LoginFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof LoginFormSchema>) {
+    setError("");
+    setSuccess("");
+    setIsPending(true);
+    await Login(values).then((data) => {
+      if (data?.error) {
+        setError(data.error);
+      }
+    });
+    setIsPending(false);
   }
 
   return (
@@ -52,15 +70,25 @@ const LoginForm = () => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="******" type="text" {...field} />
+                <Input placeholder="******" type="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button className="w-full" type="submit">
+        <Button disabled={isPending} className="w-full" type="submit">
           Login
         </Button>
+        {error && (
+          <p className="text-destructive break-words text-center font-bold">
+            {error}
+          </p>
+        )}
+        {success && (
+          <p className="text-green-500 break-words text-center font-bold">
+            {success}
+          </p>
+        )}
       </form>
     </Form>
   );

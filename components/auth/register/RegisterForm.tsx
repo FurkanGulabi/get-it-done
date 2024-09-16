@@ -13,8 +13,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Register } from "@/actions/Register";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
+  const [error, setError] = useState("");
+  const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof RegisterFormSchema>>({
     resolver: zodResolver(RegisterFormSchema),
     defaultValues: {
@@ -25,10 +32,17 @@ const RegisterForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof RegisterFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof RegisterFormSchema>) {
+    setError("");
+    setIsPending(true);
+    await Register(values).then((data) => {
+      if (data.error) {
+        setError(data.error);
+      } else if (data.success) {
+        router.replace("/auth/login?success=true");
+      }
+    });
+    setIsPending(false);
   }
 
   return (
@@ -82,15 +96,20 @@ const RegisterForm = () => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="******" type="text" {...field} />
+                <Input placeholder="******" type="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button className="w-full" type="submit">
+        <Button disabled={isPending} className="w-full" type="submit">
           Login
         </Button>
+        {error && (
+          <p className="text-destructive break-words text-center font-bold">
+            {error}
+          </p>
+        )}
       </form>
     </Form>
   );
