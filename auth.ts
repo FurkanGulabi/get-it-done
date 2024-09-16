@@ -7,6 +7,7 @@ import Credentials from "next-auth/providers/credentials";
 import { getUserByEmail, getUserById } from "./data/user";
 import LoginFormSchema from "./schemas/LoginFormSchema";
 import bcryptjs from "bcryptjs";
+import { Role } from "@prisma/client";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   /* TODO: Add logo to the auth  
@@ -35,7 +36,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           console.log(user);
 
-          if (passwordMatch) return user;
+          if (passwordMatch) {
+            return {
+              id: user.id,
+              name: user.name ?? undefined, // Convert null to undefined
+              surname: user.surname ?? undefined, // Convert null to undefined
+              email: user.email,
+              emailVerified: user.emailVerified ?? undefined, // Convert null to undefined
+              image: user.image ?? undefined, // Convert null to undefined
+              role: user.role as Role, // Make sure the role is typed correctly
+              createdAt: user.createdAt, // Pass the createdAt field
+              updatedAt: user.updatedAt, // Pass the updatedAt field
+            };
+          }
         }
         return null;
       },
