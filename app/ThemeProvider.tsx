@@ -1,18 +1,23 @@
 "use client";
+import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesThemeProvider } from "next-themes";
 
 interface ThemeProviderProps {
   children: React.ReactNode;
+  defaultTheme?: string; // Optional, default theme can be passed dynamically
 }
 
-const ThemeProvider = ({ children }: ThemeProviderProps) => {
+const ThemeProvider = ({
+  children,
+  defaultTheme = "light", // Default to light if not provided
+}: ThemeProviderProps) => {
   return (
     <NextThemesThemeProvider
-      defaultTheme="light"
+      defaultTheme={defaultTheme}
       enableSystem
       attribute="class"
     >
-      {children}
+      <NextUIProvider>{children}</NextUIProvider>
     </NextThemesThemeProvider>
   );
 };

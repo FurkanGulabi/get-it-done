@@ -3,7 +3,6 @@ import { getUserByEmail } from "@/data/user";
 import prisma from "@/lib/db";
 import RegisterFormSchema from "@/schemas/RegisterFormSchema";
 import bcryptjs from "bcryptjs";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const Register = async (formData: z.infer<typeof RegisterFormSchema>) => {

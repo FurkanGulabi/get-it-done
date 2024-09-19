@@ -23,7 +23,7 @@ const Login = async (values: z.infer<typeof LoginFormSchema>) => {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/",
+      redirectTo: "/dashboard",
     });
   } catch (error) {
     if (error instanceof AuthError) {

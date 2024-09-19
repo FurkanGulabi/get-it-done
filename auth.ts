@@ -18,9 +18,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: "jwt",
   },
+  events: {
+    async linkAccount({ user }) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { emailVerified: new Date() },
+      });
+    },
+  },
+  pages: {
+    signIn: "/auth/login",
+  },
   providers: [
-    Google,
-    GitHub,
+    Google({ allowDangerousEmailAccountLinking: true }),
+    GitHub({ allowDangerousEmailAccountLinking: true }),
     Credentials({
       async authorize(credentials) {
         const validatedFields = LoginFormSchema.safeParse(credentials);
@@ -32,9 +43,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (!user || !user.password) return null;
 
           const passwordMatch = await bcryptjs.compare(password, user.password);
-          console.log(passwordMatch);
-
-          console.log(user);
 
           if (passwordMatch) {
             return {

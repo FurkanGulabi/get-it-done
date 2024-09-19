@@ -13,19 +13,32 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Login } from "@/actions/Login";
 
 const LoginForm = () => {
   const searchParams = useSearchParams();
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState<string>(
-    searchParams.get("success") === "true"
-      ? "Register successful, please login"
-      : ""
-  );
+  const [success, setSuccess] = useState<string>("");
   const [isPending, setIsPending] = useState(false);
+
+  useEffect(() => {
+    const successParam = searchParams.get("success");
+    const errorParam = searchParams.get("error");
+
+    // Handle success message
+    if (successParam === "true") {
+      setSuccess("Register successful, please login");
+    }
+
+    // Handle OAuthAccountNotLinked error message
+    if (errorParam === "OAuthAccountNotLinked") {
+      setError(
+        "Email linked with another account or provider. Please sign in with that provider."
+      );
+    }
+  }, [searchParams]);
 
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
