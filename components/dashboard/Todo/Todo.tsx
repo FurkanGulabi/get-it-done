@@ -1,3 +1,7 @@
+//Todo: change style of the Todos for modern look
+//Todo: Add a button for Delete and Edit
+//Todo: Add a button for Mark as Completed
+
 import { TodoType } from "@/types/TodoType";
 import React from "react";
 
@@ -21,12 +25,6 @@ const Todo = ({ todo }: TodoProps) => {
     POSTPONED: "Postponed",
     COMPLETED: "Completed",
   }[todo.status];
-
-  // Handle endDate display logic
-  const endDateLabel =
-    todo.endDate === "whencompleted"
-      ? "When Completed"
-      : new Date(todo.endDate!).toLocaleDateString();
 
   return (
     <div
@@ -73,7 +71,7 @@ const Todo = ({ todo }: TodoProps) => {
 
       {/* End Date */}
       <p className="text-sm text-gray-400">
-        End Date: {endDateLabel || "Not Set"}
+        End Date: {todo.endDate || "Not Set"}
       </p>
     </div>
   );

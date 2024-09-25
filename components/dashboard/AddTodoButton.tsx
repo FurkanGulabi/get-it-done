@@ -36,12 +36,15 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AddTodo } from "@/actions/Todo/AddTodo";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface AddTodoButtonProps {
   className?: string;
 }
 
 const AddTodoButton = ({ className }: AddTodoButtonProps) => {
+  const [isPending, setIsPending] = useState(false);
+  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof AddTodoFormSchema>>({
     resolver: zodResolver(AddTodoFormSchema),
     defaultValues: {
@@ -55,16 +58,24 @@ const AddTodoButton = ({ className }: AddTodoButtonProps) => {
 
   // Handle form submission
   async function onSubmit(values: z.infer<typeof AddTodoFormSchema>) {
+    setIsPending(true);
+
     try {
-      await AddTodo(values);
+      await AddTodo(values).then((data) => {
+        if (data.success) {
+          setOpen(false);
+        }
+      });
       form.reset(); // Reset the form after successful submission
     } catch (error) {
       console.error("Error submitting form", error);
+    } finally {
+      setIsPending(false);
     }
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="default"
@@ -197,7 +208,9 @@ const AddTodoButton = ({ className }: AddTodoButtonProps) => {
             />
 
             <DialogFooter>
-              <Button type="submit">Save changes</Button>
+              <Button disabled={isPending} type="submit">
+                Save changes
+              </Button>
             </DialogFooter>
           </form>
         </Form>

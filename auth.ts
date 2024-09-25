@@ -14,6 +14,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   theme:{
     logo:"/logo.png"
   }, */
+  secret: process.env.AUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",

@@ -41,7 +41,9 @@ async function AddTodo(values: z.infer<typeof AddTodoFormSchema>) {
       throw new Error("Invalid date format");
     }
 
-    const newTodo = await prisma.todo.create({
+    //TODO: Implement react query here
+
+    await prisma.todo.create({
       data: {
         title,
         description: description || "",
@@ -56,7 +58,7 @@ async function AddTodo(values: z.infer<typeof AddTodoFormSchema>) {
       },
     });
 
-    return newTodo;
+    return { success: true };
   } catch (error: unknown) {
     console.error(error);
     // Handle and return meaningful errors
