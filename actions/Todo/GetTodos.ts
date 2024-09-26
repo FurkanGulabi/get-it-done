@@ -18,7 +18,6 @@ async function GetTodos() {
       },
     });
 
-    console.log(todos);
     return todos;
   } catch (error: unknown) {
     console.error(error);

@@ -193,7 +193,7 @@ const page = () => {
       </p>
       <ul>
         <li>Google</li>
-        <li>GitHub</li>
+        <li>GitHub+</li>
       </ul>
       <p className="text-muted-foreground mt-2">
         If You decide to register through or otherwise grant us access to a

@@ -37,14 +37,16 @@ import { z } from "zod";
 import { AddTodo } from "@/actions/Todo/AddTodo";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface AddTodoButtonProps {
   className?: string;
 }
 
 const AddTodoButton = ({ className }: AddTodoButtonProps) => {
-  const [isPending, setIsPending] = useState(false);
   const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient(); // Get the query client to trigger refetch
+
   const form = useForm<z.infer<typeof AddTodoFormSchema>>({
     resolver: zodResolver(AddTodoFormSchema),
     defaultValues: {
@@ -56,23 +58,24 @@ const AddTodoButton = ({ className }: AddTodoButtonProps) => {
     },
   });
 
-  // Handle form submission
-  async function onSubmit(values: z.infer<typeof AddTodoFormSchema>) {
-    setIsPending(true);
-
-    try {
-      await AddTodo(values).then((data) => {
-        if (data.success) {
-          setOpen(false);
-        }
-      });
-      form.reset(); // Reset the form after successful submission
-    } catch (error) {
+  const mutation = useMutation({
+    mutationFn: AddTodo, // Ensure this is provided correctly
+    onSuccess: (data) => {
+      if (data.success) {
+        setOpen(false);
+        form.reset();
+        queryClient.invalidateQueries({ queryKey: ["todos"] }); // Trigger refetch
+      }
+    },
+    onError: (error) => {
       console.error("Error submitting form", error);
-    } finally {
-      setIsPending(false);
-    }
-  }
+    },
+  });
+
+  // Handle form submission using react-query
+  const onSubmit = (values: z.infer<typeof AddTodoFormSchema>) => {
+    mutation.mutate(values);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -208,8 +211,8 @@ const AddTodoButton = ({ className }: AddTodoButtonProps) => {
             />
 
             <DialogFooter>
-              <Button disabled={isPending} type="submit">
-                Save changes
+              <Button disabled={mutation.isPending} type="submit">
+                {mutation.isPending ? "Saving..." : "Save changes"}
               </Button>
             </DialogFooter>
           </form>

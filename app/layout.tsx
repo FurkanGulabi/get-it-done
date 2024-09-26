@@ -2,11 +2,11 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "@/styles/globals.css";
-import ThemeProvider from "./ThemeProvider";
 import { SessionProvider } from "next-auth/react";
 import { Header } from "@/components/Header";
 import { cn } from "@/lib/utils";
 import { auth } from "@/auth";
+import Providers from "./providers";
 
 const font = Open_Sans({
   subsets: ["latin"],
@@ -30,10 +30,10 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en" suppressHydrationWarning>
         <body className={cn("min-h-screen antialiased", font.variable)}>
-          <ThemeProvider>
+          <Providers>
             <Header /> {/* Header will now correctly get session data */}
             {children}
-          </ThemeProvider>
+          </Providers>
         </body>
       </html>
     </SessionProvider>

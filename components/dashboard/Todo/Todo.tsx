@@ -1,9 +1,9 @@
-//Todo: change style of the Todos for modern look
-//Todo: Add a button for Delete and Edit
-//Todo: Add a button for Mark as Completed
-
 import { TodoType } from "@/types/TodoType";
 import React from "react";
+import { Button } from "@/components/ui/button";
+import { FaEdit } from "react-icons/fa";
+import DeleteTodoButton from "./buttons/DeleteTodoButton";
+import TodoCheckbox from "./buttons/TodoCheckbox";
 
 interface TodoProps {
   todo: TodoType;
@@ -11,12 +11,11 @@ interface TodoProps {
 
 const Todo = ({ todo }: TodoProps) => {
   // Define background color based on priority
-  const priorityColor =
-    todo.priority === "HIGH"
-      ? "bg-red-500/40 border-red-500"
-      : todo.priority === "MEDIUM"
-      ? "bg-yellow-500/40 border-yellow-500"
-      : "bg-green-500/40 border-green-500";
+  const priorityColor = {
+    HIGH: "border-red-500",
+    MEDIUM: "border-yellow-500",
+    LOW: "border-green-500",
+  }[todo.priority];
 
   // Define label for the status of the todo
   const statusLabel = {
@@ -26,53 +25,32 @@ const Todo = ({ todo }: TodoProps) => {
     COMPLETED: "Completed",
   }[todo.status];
 
+  const completedLabel = todo.isCompleted ? "Yes" : "No";
+
   return (
     <div
-      className={`shadow w-full border !text-foreground flex flex-col gap-2 p-4 ${priorityColor} rounded-lg`}
+      className={`shadow w-full !text-foreground border-b-8 items-center justify-between flex flex-row gap-2 p-4 ${priorityColor} rounded-lg`}
     >
-      {/* Title */}
-      <h2 className="text-white font-bold text-lg">{todo.title}</h2>
-
-      {/* Description */}
-      <p className="text-white">{todo.description}</p>
-
-      {/* Status */}
-      <p className="text-sm">
-        Status:{" "}
-        <span
-          className={`font-semibold ${
-            todo.status === "COMPLETED"
-              ? "text-green-500"
-              : todo.status === "POSTPONED"
-              ? "text-yellow-500"
-              : "text-blue-500"
-          }`}
-        >
-          {statusLabel}
-        </span>
-      </p>
-
-      {/* Completion Indicator */}
-      <p className="text-sm">
-        Completed:{" "}
-        <span
-          className={`font-semibold ${
-            todo.isCompleted ? "text-green-500" : "text-red-500"
-          }`}
-        >
-          {todo.isCompleted ? "Yes" : "No"}
-        </span>
-      </p>
-
-      {/* Created At */}
-      <p className="text-sm text-gray-400">
-        Created At: {new Date(todo.createdAt).toLocaleDateString()}
-      </p>
-
-      {/* End Date */}
-      <p className="text-sm text-gray-400">
-        End Date: {todo.endDate || "Not Set"}
-      </p>
+      <div className="flex flex-row items-center gap-6">
+        <TodoCheckbox todoId={todo.id} isCompleted={todo.isCompleted} />
+        <div className="flex flex-col gap-2">
+          <h2 className="text-xl">{todo.title}</h2>
+          <p className="opacity-80 text-sm">{todo.description}</p>
+        </div>
+      </div>
+      <div className="flex flex-col items-end space-y-12">
+        <div className="flex flex-row gap-2 items-center">
+          <DeleteTodoButton todoId={todo.id} />
+          <Button variant={"default"} className="rounded-full">
+            <FaEdit />
+          </Button>
+        </div>
+        <div>
+          <p>Status: {statusLabel}</p>
+          <p>Completed: {completedLabel}</p>
+          <p>End Date: {todo.endDate}</p>
+        </div>
+      </div>
     </div>
   );
 };
