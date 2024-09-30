@@ -5,8 +5,8 @@ export interface TodoType {
   isCompleted: boolean;
   status: "PENDING" | "ONGOING" | "POSTPONED" | "COMPLETED";
   priority: "LOW" | "MEDIUM" | "HIGH";
-  createdAt: string;
-  updatedAt: string;
-  endDate: string | null; // Could be a date string or "whencompleted"
+  createdAt: string | Date;
+  updatedAt: string | Date;
+  endDate: Date | string;
   userId: string;
 }

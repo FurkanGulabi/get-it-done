@@ -1,15 +1,14 @@
 import { TodoType } from "@/types/TodoType";
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { FaEdit } from "react-icons/fa";
 import DeleteTodoButton from "./buttons/DeleteTodoButton";
 import TodoCheckbox from "./buttons/TodoCheckbox";
-
+import EditTodoButton from "./buttons/EditTodoButton";
 interface TodoProps {
   todo: TodoType;
+  defaultTodo?: TodoType;
 }
 
-const Todo = ({ todo }: TodoProps) => {
+const Todo = ({ todo, defaultTodo }: TodoProps) => {
   // Define background color based on priority
   const priorityColor = {
     HIGH: "border-red-500",
@@ -41,9 +40,7 @@ const Todo = ({ todo }: TodoProps) => {
       <div className="flex flex-col items-end space-y-12">
         <div className="flex flex-row gap-2 items-center">
           <DeleteTodoButton todoId={todo.id} />
-          <Button variant={"default"} className="rounded-full">
-            <FaEdit />
-          </Button>
+          <EditTodoButton defaultTodo={defaultTodo} />
         </div>
         <div>
           <p>Status: {statusLabel}</p>

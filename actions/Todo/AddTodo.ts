@@ -28,7 +28,7 @@ async function AddTodo(values: z.infer<typeof AddTodoFormSchema>) {
 
     let transformDate: string;
 
-    console.log(date);
+    date;
 
     if (date === "whencompleted") {
       transformDate = "whencompleted"; // If the date is "whencompleted", keep it as is

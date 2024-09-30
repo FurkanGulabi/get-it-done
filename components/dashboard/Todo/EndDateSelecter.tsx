@@ -29,8 +29,9 @@ const EndDateSelecter = ({ date, setDate, field }: EndDateSelecterProps) => {
   const displayDate = () => {
     if (typeof date === "string") {
       // Handle special string cases
+      if (date === "whencompleted") return "When completed";
       if (date === "undefined") return "Select end date";
-      return date; // whencompleted or other strings
+      return date; // Other string cases
     }
     // Handle Date object
     return format(date, "dd MMM yyyy");
@@ -42,7 +43,7 @@ const EndDateSelecter = ({ date, setDate, field }: EndDateSelecterProps) => {
         <Button
           variant={"outline"}
           className={cn(
-            " justify-start w-full text-left font-normal",
+            "justify-start w-full text-left font-normal",
             !date && "text-muted-foreground"
           )}
         >
@@ -60,8 +61,12 @@ const EndDateSelecter = ({ date, setDate, field }: EndDateSelecterProps) => {
             } else {
               // Calculate the future date based on the selected option
               const newDate = addDays(new Date(), parseInt(value));
-              setDate(newDate);
-              field.onChange(newDate); // Sync with React Hook Form
+              if (!isNaN(newDate.getTime())) {
+                setDate(newDate);
+                field.onChange(newDate); // Sync with React Hook Form
+              } else {
+                console.error("Invalid date calculation");
+              }
             }
           }}
         >
@@ -88,7 +93,7 @@ const EndDateSelecter = ({ date, setDate, field }: EndDateSelecterProps) => {
               field.onChange(day); // Sync with React Hook Form
             }
           }}
-          initialFocus
+          initialFocus={typeof date !== "string"}
         />
       </PopoverContent>
     </Popover>

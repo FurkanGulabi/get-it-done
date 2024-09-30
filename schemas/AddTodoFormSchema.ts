@@ -14,12 +14,14 @@ const AddTodoFormSchema = z.object({
       z.date({ required_error: "End date is required" }),
       z.literal("undefined"), // Accept the string "undefined"
       z.literal("whencompleted"), // Accept the string "whencompleted"
+      z.string(), // Accept string for potential date string
     ])
     .refine(
       (value) =>
         value instanceof Date ||
         value === "undefined" ||
-        value === "whencompleted",
+        value === "whencompleted" ||
+        !isNaN(Date.parse(value)), // Validate if the string is a valid date
       {
         message: "Please select a valid date or leave it undefined",
       }
