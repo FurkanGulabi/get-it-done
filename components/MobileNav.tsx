@@ -12,7 +12,7 @@ const MobileNav = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <Drawer>
+    <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button variant={"outline"}>
           <BiMenu size={24} />
